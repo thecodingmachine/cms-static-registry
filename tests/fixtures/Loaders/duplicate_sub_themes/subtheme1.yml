@@ -1,0 +1,5 @@
+name: foo
+parent: foo_theme
+assignations:
+  header_left:
+    - logo

@@ -1,0 +1,5 @@
+name: theme with header and footer only
+parent: foo_theme
+assignations:
+  header_left:
+    - logo
