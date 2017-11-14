@@ -32,7 +32,11 @@ class StaticRegistry implements PageRegistryInterface
         $domain = $uri->getHost();
         $url = $uri->getPath();
 
-        $page = $this->pageRegistry->getPage($url, $domain);
+        try {
+            $page = $this->pageRegistry->getPage($url, $domain);
+        } catch (PageNotFoundException $e) {
+            return null;
+        }
 
         $block = new Block($this->themeRegistry->getThemeDescriptor($page->getTheme()), [
             'content' => [ $page->getContent() ]

@@ -73,6 +73,7 @@ class PageRegistry
     private function getImportedPages(): array
     {
         if ($this->pages === null) {
+            $this->pages = [];
             $fileList = new Finder();
 
             $fileList->files()->in($this->pageDirectory)->sortByName();
