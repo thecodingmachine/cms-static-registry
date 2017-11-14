@@ -9,11 +9,14 @@ use TheCodingMachine\CMS\StaticRegistry\Registry\StaticRegistry;
 use TheCodingMachine\CMS\StaticRegistry\Registry\ThemeRegistry;
 use TheCodingMachine\Funky\Annotations\Factory;
 use TheCodingMachine\Funky\ServiceProvider;
+use TheCodingMachine\CMS\Page\PageRegistryInterface;
 
 class StaticRegistryServiceProvider extends ServiceProvider
 {
     /**
-     * @Factory()
+     * @Factory(
+     *     aliases={PageRegistryInterface::class}
+     * )
      */
     public static function getStaticRegistry(PageRegistry $pageRegistry, ThemeRegistry $themeRegistry): StaticRegistry
     {
@@ -23,29 +26,29 @@ class StaticRegistryServiceProvider extends ServiceProvider
     /**
      * @Factory()
      */
-    public static function getPageRegistry(string $PAGES_DIRECTORY, CacheInterface $cache): PageRegistry
+    public static function getPageRegistry(string $PAGES_PATH, CacheInterface $cache): PageRegistry
     {
-        return new PageRegistry($PAGES_DIRECTORY, $cache);
+        return new PageRegistry($PAGES_PATH, $cache);
     }
 
     /**
      * @Factory()
      */
-    public static function getThemeRegistry(string $THEMES_DIRECTORY, string $SUBTHEMES_DIRECTORY, ContainerInterface $container, CacheInterface $cache, BlockRegistry $blockRegistry): ThemeRegistry
+    public static function getThemeRegistry(string $THEMES_PATH, string $SUBTHEMES_PATH, ContainerInterface $container, CacheInterface $cache, BlockRegistry $blockRegistry): ThemeRegistry
     {
-        return new ThemeRegistry($THEMES_DIRECTORY, $SUBTHEMES_DIRECTORY, $container, $cache, $blockRegistry);
+        return new ThemeRegistry($THEMES_PATH, $SUBTHEMES_PATH, $container, $cache, $blockRegistry);
     }
 
     /**
      * @Factory()
      */
-    public static function getBlockRegistry(string $BLOCKS_DIRECTORY, ContainerInterface $container, CacheInterface $cache): BlockRegistry
+    public static function getBlockRegistry(string $BLOCKS_PATH, ContainerInterface $container, CacheInterface $cache): BlockRegistry
     {
-        return new BlockRegistry($BLOCKS_DIRECTORY, $container, $cache);
+        return new BlockRegistry($BLOCKS_PATH, $container, $cache);
     }
 
     /**
-     * @Factory(name="PAGES_DIRECTORY")
+     * @Factory(name="PAGES_PATH")
      */
     public static function getPagesDirectory(string $CMS_ROOT): string
     {
@@ -53,7 +56,7 @@ class StaticRegistryServiceProvider extends ServiceProvider
     }
 
     /**
-     * @Factory(name="THEMES_DIRECTORY")
+     * @Factory(name="THEMES_PATH")
      */
     public static function getThemesDirectory(string $CMS_ROOT): string
     {
@@ -61,7 +64,7 @@ class StaticRegistryServiceProvider extends ServiceProvider
     }
 
     /**
-     * @Factory(name="SUBTHEMES_DIRECTORY")
+     * @Factory(name="SUBTHEMES_PATH")
      */
     public static function getSubthemesDirectory(string $CMS_ROOT): string
     {
@@ -69,7 +72,7 @@ class StaticRegistryServiceProvider extends ServiceProvider
     }
 
     /**
-     * @Factory(name="BLOCKS_DIRECTORY")
+     * @Factory(name="BLOCKS_PATH")
      */
     public static function getBlocksDirectory(string $CMS_ROOT): string
     {
