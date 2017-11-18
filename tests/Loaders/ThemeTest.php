@@ -9,10 +9,10 @@ class ThemeTest extends TestCase
 {
     public function testLoadTheme()
     {
-        $theme = Theme::fromDirectory(__DIR__ . '/../fixtures/Loaders/themes/foo_theme');
+        $theme = Theme::fromDirectory(__DIR__ . '/../fixtures/Loaders/public/themes/foo_theme');
 
         $this->assertSame('foo_theme', $theme->getName());
-        $this->assertSame(__DIR__ . '/../fixtures/Loaders/themes/foo_theme', $theme->getPath());
+        $this->assertSame(__DIR__ . '/../fixtures/Loaders/public/themes/foo_theme', $theme->getPath());
         $this->assertSame(['foo', 'bar'], $theme->getZones());
     }
 
@@ -25,12 +25,12 @@ class ThemeTest extends TestCase
     public function testMissingDir()
     {
         $this->expectException(UnableToLoadFileException::class);
-        Theme::fromDirectory(__DIR__.'/../fixtures/Loaders/themes/not_exists.html');
+        Theme::fromDirectory(__DIR__ . '/../fixtures/Loaders/public/themes/not_exists.html');
     }
 
     public function testMissingFile()
     {
         $this->expectException(UnableToLoadFileException::class);
-        Theme::fromDirectory(__DIR__.'/../fixtures/Loaders/themes');
+        Theme::fromDirectory(__DIR__ . '/../fixtures/Loaders/public/themes');
     }
 }

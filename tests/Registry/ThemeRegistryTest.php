@@ -21,17 +21,17 @@ class ThemeRegistryTest extends TestCase
             return new Theme(__DIR__ . '/bar_theme', []);
         });
         $blockRegistry = new BlockRegistry(__DIR__ . '/../fixtures/Loaders/blocks', $simplex, new ArrayCache());
-        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/themes', __DIR__ . '/../fixtures/Loaders/sub_themes', $simplex, new ArrayCache(), $blockRegistry);
+        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/public/themes', __DIR__ . '/../fixtures/Loaders/sub_themes', $simplex, new ArrayCache(), $blockRegistry);
         $theme = $themeRegistry->getThemeDescriptor('foo_theme');
         /* @var $theme TwigThemeDescriptor */
         $this->assertInstanceOf(TwigThemeDescriptor::class, $theme);
-        $this->assertSame(__DIR__ . '/../fixtures/Loaders/themes/foo_theme/index.twig', $theme->getTemplate());
+        $this->assertSame('foo_theme/index.twig', $theme->getTemplate());
 
         $theme = $themeRegistry->getThemeDescriptor('foo_theme');
-        $this->assertSame(__DIR__ . '/../fixtures/Loaders/themes/foo_theme/index.twig', $theme->getTemplate());
+        $this->assertSame('foo_theme/index.twig', $theme->getTemplate());
 
         $theme = $themeRegistry->getThemeDescriptor('bar_theme');
-        $this->assertSame(__DIR__ . '/bar_theme/index.twig', $theme->getTemplate());
+        $this->assertSame('bar_theme/index.twig', $theme->getTemplate());
 
         $this->expectException(ThemeNotFoundException::class);
         $themeRegistry->getThemeDescriptor('no_theme');
@@ -47,14 +47,14 @@ class ThemeRegistryTest extends TestCase
             return new TwigThemeDescriptor('index.twig', []);
         });
         $blockRegistry = new BlockRegistry(__DIR__ . '/../fixtures/Loaders/blocks', $simplex, new ArrayCache());
-        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/themes', __DIR__ . '/../fixtures/Loaders/sub_themes', $simplex, new ArrayCache(), $blockRegistry);
+        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/public/themes', __DIR__ . '/../fixtures/Loaders/sub_themes', $simplex, new ArrayCache(), $blockRegistry);
         $theme = $themeRegistry->getThemeDescriptor('theme with header and footer only');
         /* @var $theme SubThemeDescriptor */
         $this->assertInstanceOf(SubThemeDescriptor::class, $theme);
-        $this->assertSame(__DIR__ . '/../fixtures/Loaders/themes/foo_theme/index.twig', $theme->getThemeDescriptor()->getTemplate());
+        $this->assertSame('foo_theme/index.twig', $theme->getThemeDescriptor()->getTemplate());
 
         $theme = $themeRegistry->getThemeDescriptor('bar_subtheme');
-        $this->assertSame(__DIR__ . '/../fixtures/Loaders/themes/foo_theme/index.twig', $theme->getThemeDescriptor()->getTemplate());
+        $this->assertSame('foo_theme/index.twig', $theme->getThemeDescriptor()->getTemplate());
 
         $theme = $themeRegistry->getThemeDescriptor('baz_theme');
         $this->assertSame($simplex['baz_theme'], $theme);
@@ -64,7 +64,7 @@ class ThemeRegistryTest extends TestCase
     {
         $simplex = new Container();
         $blockRegistry = new BlockRegistry(__DIR__ . '/../fixtures/Loaders/blocks', $simplex, new ArrayCache());
-        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/themes', __DIR__ . '/../fixtures/Loaders/duplicate_sub_themes', $simplex, new ArrayCache(), $blockRegistry);
+        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/public/themes', __DIR__ . '/../fixtures/Loaders/duplicate_sub_themes', $simplex, new ArrayCache(), $blockRegistry);
         $this->expectException(DuplicateSubThemeException::class);
         $themeRegistry->getThemeDescriptor('foo');
     }

@@ -15,7 +15,7 @@ class StaticRegistryTest extends TestCase
     {
         $simplex = new Container();
         $blockRegistry = new BlockRegistry(__DIR__ . '/../fixtures/Loaders/blocks', $simplex, new ArrayCache());
-        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/themes', __DIR__ . '/../fixtures/Loaders/sub_themes', $simplex, new ArrayCache(), $blockRegistry);
+        $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/public/themes', __DIR__ . '/../fixtures/Loaders/sub_themes', $simplex, new ArrayCache(), $blockRegistry);
         $pageRegistry = new PageRegistry(__DIR__ . '/../fixtures/Loaders/pages', new ArrayCache());
 
         $staticPageRegistry = new StaticRegistry($pageRegistry, $themeRegistry);
