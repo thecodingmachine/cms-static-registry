@@ -84,6 +84,8 @@ class StaticRegistryServiceProvider extends ServiceProvider
      * @Extension(
      *     nameFromMethodName=true
      * )
+     * @param \Twig_LoaderInterface[] $loaders
+     * @param string $THEMES_PATH
      * @return \Twig_LoaderInterface[]
      */
     public static function twig_loaders(array $loaders, string $THEMES_PATH): array
