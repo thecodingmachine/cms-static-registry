@@ -23,7 +23,7 @@ class MenuItem {
     /**
      * The children menu item of this menu (if any).
      *
-     * @var MenuItem[]
+     * @var \SplPriorityQueue|MenuItem[]
      */
     private $children;
 
@@ -69,12 +69,11 @@ class MenuItem {
     /**
      * @param string $label The text for the menu item
      * @param string|null $url The link for the menu (relative to the root url), unless it starts with / or http:// or https:// or # or ?.
-     * @param MenuItem[] $children
      */
-    public function __construct(string $label, string $url=null, array $children=[]) {
+    public function __construct(string $label, string $url=null) {
         $this->label = $label;
         $this->url = $url;
-        $this->children = $children;
+        $this->children = new \SplPriorityQueue();
     }
 
     /**
@@ -108,54 +107,17 @@ class MenuItem {
      *
      * @return MenuItem[]
      */
-    public function getChildren(): array {
-        if ($this->sorted === false && $this->children) {
-            // First, let's make 2 arrays: the array of children with a priority, and the array without.
-            $childrenWithPriorities = array();
-            $childrenWithoutPriorities = array();
-            foreach ($this->children as $child) {
-                /* @var $child MenuItem */
-                $priority = $child->getPriority();
-                if ($priority === null) {
-                    $childrenWithoutPriorities[] = $child;
-                } else {
-                    $childrenWithPriorities[] = $child;
-                }
-            }
-
-            usort($childrenWithPriorities, [$this, 'compareMenuItems']);
-            $this->children = array_merge($childrenWithPriorities, $childrenWithoutPriorities);
-            $this->sorted = true;
-        }
+    public function getChildren(): \SplPriorityQueue {
         return $this->children;
-    }
-
-    public function compareMenuItems(MenuItem $item1, MenuItem $item2): int {
-        return $item1->getPriority() <=> $item2->getPriority();
-    }
-
-    /**
-     * The children menu item of this menu (if any).
-     *
-     * @param MenuItem[] $children
-     * @return MenuItem
-     */
-    public function setChildren(array $children): self {
-        $this->sorted = false;
-        $this->children = $children;
-        return $this;
     }
 
     /**
      * Adds a menu item as a child of this menu item.
      *
      * @param MenuItem $menuItem
-     * @return MenuItem
      */
-    public function addMenuItem(MenuItem $menuItem): self {
-        $this->sorted = false;
-        $this->children[] = $menuItem;
-        return $this;
+    public function addMenuItem(MenuItem $menuItem, float $priority): void {
+        $this->children->insert($menuItem, $priority);
     }
 
     /**
@@ -249,24 +211,6 @@ class MenuItem {
     public function setCssClass($cssClass) {
         $this->cssClass = $cssClass;
         return $this;
-    }
-
-    /**
-     * Level of priority used to order the menu items.
-     *
-     * @param float $priority
-     */
-    public function setPriority(float $priority) {
-        $this->priority = $priority;
-        return $this;
-    }
-
-    /**
-     * Returns the level of priority. It is used to order the menu items.
-     * @return float
-     */
-    public function getPriority(): float {
-        return $this->priority;
     }
 
     /**

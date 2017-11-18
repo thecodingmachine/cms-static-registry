@@ -49,15 +49,14 @@ class MenuRegistry
             $childMenuItem = $menuItem->findChild($label);
             if ($childMenuItem === null) {
                 $childMenuItem = new MenuItem($label);
-                $menuItem->addMenuItem($childMenuItem);
+                $menuItem->addMenuItem($childMenuItem, 0);
             }
             $this->registerSubMenuItem($childMenuItem, $items, $url, $priority, $cssClass);
             return;
         }
 
         $childMenuItem = new MenuItem($label, $url);
-        $childMenuItem->setPriority($priority);
         $childMenuItem->setCssClass($cssClass);
-        $menuItem->addMenuItem($childMenuItem);
+        $menuItem->addMenuItem($childMenuItem, $priority);
     }
 }
