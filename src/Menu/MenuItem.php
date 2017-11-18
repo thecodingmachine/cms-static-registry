@@ -35,36 +35,12 @@ class MenuItem {
     private $cssClass;
 
     /**
-     * Whether the menu is in an active state or not.
-     *
-     * @var bool
-     */
-    private $isActive;
-
-    /**
      * Whether the menu is extended or not.
      * This should not have an effect if the menu has no child.
      *
      * @var bool
      */
     private $isExtended;
-
-    /**
-     * Level of priority used to order the menu items.
-     *
-     * @var float
-     */
-    private $priority = 0.0;
-
-    /**
-     * @var bool
-     */
-    private $activateBasedOnUrl;
-
-    /**
-     * @var bool
-     */
-    private $sorted = false;
 
     /**
      * @param string $label The text for the menu item
@@ -105,10 +81,12 @@ class MenuItem {
     /**
      * Returns a list of children elements for the menu (if there are some).
      *
+     * Note: a SplPriorityQueue can be iterated only once so we clone the whole queue and turn it into an array
+     *
      * @return MenuItem[]
      */
-    public function getChildren(): \SplPriorityQueue {
-        return $this->children;
+    public function getChildren(): array {
+        return iterator_to_array(clone $this->children);
     }
 
     /**
@@ -120,78 +98,24 @@ class MenuItem {
         $this->children->insert($menuItem, $priority);
     }
 
+
+    public function isActive(string $url): bool
+    {
+        return $url === $this->url;
+    }
+
     /**
-     * Returns true if the menu is in active state (if we are on the page for this menu).
+     * Returns true if the menu should be in extended state (if one of the children is in active state).
      * @return bool
      */
-    public function isActive(string $rootUrl) {
-        if ($this->isActive) {
-            return true;
-        }
-
-        if($this->activateBasedOnUrl && $this->url !== null) {
-            $urlParts = parse_url($_SERVER['REQUEST_URI']);
-            $menuUrlParts = parse_url($this->getLink($rootUrl));
-
-            if (isset($menuUrlParts['path'])) {
-                $menuUrl = $menuUrlParts['path'];
-            } else {
-                $menuUrl = '/';
-            }
-
-            if (isset($urlParts['path'])) {
-                $requestUrl = $urlParts['path'];
-            } else {
-                $requestUrl = '/';
-            }
-
-            if($requestUrl === $menuUrl) {
+    public function isExtended(string $url): bool {
+        foreach ($this->children as $child) {
+            if ($child->isActive($url) || $child->isExtended($url)) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Set the active state of the menu.
-     *
-     * @param bool $isActive
-     * @return MenuItem
-     */
-    public function setIsActive(bool $isActive): self {
-        $this->isActive = $isActive;
-        return $this;
-    }
-
-    /**
-     * Enables the menu item (activates it).
-     *
-     */
-    public function enable(): self {
-        $this->isActive = true;
-        return $this;
-    }
-
-    /**
-     * Returns true if the menu should be in extended state (if we can see the children directly).
-     * @return bool
-     */
-    public function isExtended(): bool {
-        // TODO: is extended if one of the sub menus is active!
-        return $this->isExtended;
-    }
-
-    /**
-     * Whether the menu is extended or not.
-     * This should not have an effect if the menu has no child.
-     *
-     * @param bool $isExtended
-     * @return MenuItem
-     */
-    public function setIsExtended(bool $isExtended = true): self {
-        $this->isExtended = $isExtended;
-        return $this;
     }
 
     /**
@@ -206,42 +130,9 @@ class MenuItem {
      * An optional CSS class to apply to the menu item.
      * Use of this property depends on the menu implementation.
      *
-     * @param string $cssClass
+     * @param string|null $cssClass
      */
-    public function setCssClass($cssClass) {
+    public function setCssClass(?string $cssClass): void {
         $this->cssClass = $cssClass;
-        return $this;
-    }
-
-    /**
-     * Returns the absolute URL, with parameters if required.
-     * @return string
-     */
-    public function getLink(string $rootUrl) {
-        if ($this->url === null) {
-            return null;
-        }
-
-        if (strpos($this->url, "/") === 0
-            || strpos($this->url, "javascript:") === 0
-            || strpos($this->url, "http://") === 0
-            || strpos($this->url, "https://") === 0
-            || strpos($this->url, "?") === 0
-            || strpos($this->url, "#") === 0) {
-            return $this->url;
-        }
-
-        return $rootUrl.$this->url;
-    }
-
-    /**
-     * If the URL of the current page matches the URL of the link, the link will be considered as "active".
-     *
-     * @param bool $activateBasedOnUrl
-     * @return MenuItem
-     */
-    public function setActivateBasedOnUrl(bool $activateBasedOnUrl = true): self {
-        $this->activateBasedOnUrl = $activateBasedOnUrl;
-        return $this;
     }
 }

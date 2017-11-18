@@ -25,7 +25,7 @@ class MenuRegistry
     }
 
     /**
-     * @param string[] $items The path from the root menu to the branch we are interested in.
+     * @param string[] $items The path from the root menu to the leaf we are interested in.
      * @param null|string $url
      * @param float $priority
      * @param string|null $cssClass
@@ -36,7 +36,8 @@ class MenuRegistry
     }
 
     /**
-     * @param string[] $items The path from the root menu to the branch we are interested in.
+     * @param MenuItem $menuItem
+     * @param string[] $items The path from $menuItem to the leaf we are interested in.
      * @param null|string $url
      * @param float $priority
      * @param string|null $cssClass
