@@ -10,6 +10,8 @@ use Symfony\Component\Finder\Finder;
 use TheCodingMachine\CMS\Block\BlockInterface;
 use TheCodingMachine\CMS\StaticRegistry\Loaders\Page;
 use TheCodingMachine\CMS\StaticRegistry\Loaders\Page404;
+use TheCodingMachine\CMS\StaticRegistry\Menu\MenuItem;
+use TheCodingMachine\CMS\StaticRegistry\Menu\MenuRegistry;
 
 /**
  * The page registry can fetch Page objects from the "pages" directory or from the container.
@@ -31,6 +33,11 @@ class PageRegistry
      * @var Page[][]
      */
     private $pages;
+
+    /**
+     * @var MenuItem
+     */
+    private $rootMenuItem;
 
     public function __construct(string $pageDirectory, CacheInterface $cache)
     {
@@ -88,5 +95,36 @@ class PageRegistry
             }
         }
         return $this->pages;
+    }
+
+    public function getRootMenuItem(): MenuItem
+    {
+        $key = 'rootMenuItem';
+        $rootMenuItem = $this->cache->get($key);
+        if ($rootMenuItem === null) {
+            $rootMenuItem = $this->getRootMenuItemWithoutCache();
+            $this->cache->set($key, $rootMenuItem);
+        }
+        return $rootMenuItem;
+    }
+
+    private function getRootMenuItemWithoutCache(): MenuItem
+    {
+        if ($this->rootMenuItem === null) {
+            $menuRegistry = new MenuRegistry();
+            $pages = $this->getImportedPages();
+            foreach ($pages as $pagesFromWebsite) {
+                foreach ($pagesFromWebsite as $page) {
+                    $menuRegistry->registerMenuItem(
+                        $page->getMenu(),
+                        $page->getUrl(),
+                        $page->getMenuOrder(),
+                        $page->getMenuCssClass()
+                    );
+                }
+            }
+            $this->rootMenuItem = $menuRegistry->getRootMenu();
+        }
+        return $this->rootMenuItem;
     }
 }

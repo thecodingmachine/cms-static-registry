@@ -7,6 +7,7 @@ use TheCodingMachine\CMS\StaticRegistry\Registry\BlockRegistry;
 use TheCodingMachine\CMS\StaticRegistry\Registry\PageRegistry;
 use TheCodingMachine\CMS\StaticRegistry\Registry\StaticRegistry;
 use TheCodingMachine\CMS\StaticRegistry\Registry\ThemeRegistry;
+use TheCodingMachine\Funky\Annotations\Extension;
 use TheCodingMachine\Funky\Annotations\Factory;
 use TheCodingMachine\Funky\ServiceProvider;
 use TheCodingMachine\CMS\Page\PageRegistryInterface;
@@ -60,7 +61,7 @@ class StaticRegistryServiceProvider extends ServiceProvider
      */
     public static function getThemesDirectory(string $CMS_ROOT): string
     {
-        return $CMS_ROOT.'/themes';
+        return $CMS_ROOT.'/public/themes';
     }
 
     /**
@@ -77,5 +78,19 @@ class StaticRegistryServiceProvider extends ServiceProvider
     public static function getBlocksDirectory(string $CMS_ROOT): string
     {
         return $CMS_ROOT.'/blocks';
+    }
+
+    /**
+     * @Extension(
+     *     nameFromMethodName=true
+     * )
+     * @param \Twig_LoaderInterface[] $loaders
+     * @param string $THEMES_PATH
+     * @return \Twig_LoaderInterface[]
+     */
+    public static function twig_loaders(array $loaders, string $THEMES_PATH): array
+    {
+        $loaders[] = new \Twig_Loader_Filesystem($THEMES_PATH);
+        return $loaders;
     }
 }

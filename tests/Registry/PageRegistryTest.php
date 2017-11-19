@@ -30,4 +30,12 @@ class PageRegistryTest extends TestCase
         $pageRegistry->getPage('/foo/bar', 'example.com');
     }
 
+    public function testGetRootMenuItem()
+    {
+        $pageRegistry = new PageRegistry(__DIR__ . '/../fixtures/Loaders/pages', new ArrayCache());
+
+        $menuItem = $pageRegistry->getRootMenuItem();
+        $this->assertCount(2, $menuItem->getChildren()[0]->getChildren()[0]->getChildren());
+    }
+
 }

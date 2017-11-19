@@ -93,7 +93,7 @@ class ThemeRegistry
 
     private function themeToBlock(Theme $theme) : ThemeDescriptorInterface
     {
-        return new TwigThemeDescriptor($theme->getPath().'/index.twig', []);
+        return new TwigThemeDescriptor($theme->getName().'/index.twig', []);
     }
 
     private function subThemeToBlock(SubTheme $subTheme) : ThemeDescriptorInterface
@@ -103,6 +103,7 @@ class ThemeRegistry
             foreach ($blocks as $blockName) {
                 foreach ($this->blockRegistry->getBlocks($blockName) as $block) {
                     // FIXME: here we should insert a CONDITIONAL block that displays only when the correct language is set.
+                    // Also, we should render the block based on a Twig template if a twig template is passed to the block.
                     $context[$zone][] = $block->getContent();
                 }
             }
@@ -120,6 +121,7 @@ class ThemeRegistry
     {
         if ($this->subThemes === null)
         {
+            $this->subThemes = [];
             $fileList = new Finder();
 
             $fileList->files()->in($this->subThemeDirectory)->name('/\.yml|\.yaml/')->sortByName();

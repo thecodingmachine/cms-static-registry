@@ -16,6 +16,7 @@ class PageTest extends TestCase
         $this->assertSame('baz', $page->getMetaDescription());
         $this->assertSame(['menu 1', 'menu 2', 'menu 3'], $page->getMenu());
         $this->assertSame(1, $page->getMenuOrder());
+        $this->assertSame('fooClass', $page->getMenuCssClass());
         $this->assertSame('example.com', $page->getWebsite());
         $this->assertSame('fr', $page->getLang());
         $this->assertSame('foo_theme', $page->getTheme());

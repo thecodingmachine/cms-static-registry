@@ -8,6 +8,7 @@ use Simplex\Container;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use TheCodingMachine\CMS\StaticRegistry\Registry\StaticRegistry;
 use TheCodingMachine\CMS\Theme\TwigThemeDescriptor;
+use TheCodingMachine\TwigServiceProvider;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 
@@ -16,6 +17,7 @@ class StaticRegistryServiceProviderTest extends TestCase
     public function testServiceProvider()
     {
         $simplex = new Container();
+        $simplex->register(new TwigServiceProvider());
         $simplex->register(new StaticRegistryServiceProvider());
 
         $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
@@ -28,5 +30,10 @@ class StaticRegistryServiceProviderTest extends TestCase
 
         $theme = $block->getThemeDescriptor();
         $this->assertInstanceOf(TwigThemeDescriptor::class, $theme);
+
+        // Let's check Twig is properly configured and can load Twig files from the themes directory.
+        $twig = $simplex->get(\Twig_Environment::class);
+        /* @var $twig \Twig_Environment */
+        $this->assertTrue($twig->getLoader()->exists('foo_theme/index.twig'));
     }
 }
