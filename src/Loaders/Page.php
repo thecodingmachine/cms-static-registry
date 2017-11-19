@@ -49,11 +49,15 @@ class Page
      * @var null|string
      */
     private $theme;
+    /**
+     * @var null|string
+     */
+    private $menuCssClass;
 
     /**
      * @param string[]|null $menu
      */
-    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $metaTitle, ?string $metaDescription, ?string $theme)
+    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme)
     {
         $this->id = $id;
         $this->title = $title;
@@ -63,6 +67,7 @@ class Page
         $this->website = $website;
         $this->menu = $menu;
         $this->menuOrder = $menuOrder;
+        $this->menuCssClass = $menuCssClass;
         $this->metaTitle = $metaTitle;
         $this->metaDescription = $metaDescription;
         $this->theme = $theme;
@@ -110,6 +115,7 @@ class Page
             $yaml['website'] ?? null,
             isset($yaml['menu']) ? array_map('trim', explode('/', $yaml['menu'])) : null,
             $yaml['menu_order'] ?? null,
+            $yaml['menu_css_class'] ?? null,
             $yaml['meta_title'] ?? null,
             $yaml['meta_description'] ?? null,
             $yaml['theme'] ?? null
@@ -178,6 +184,14 @@ class Page
     public function getMenuOrder(): ?int
     {
         return $this->menuOrder;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getMenuCssClass(): ?string
+    {
+        return $this->menuCssClass;
     }
 
     /**

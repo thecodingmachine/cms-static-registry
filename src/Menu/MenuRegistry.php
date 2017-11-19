@@ -42,7 +42,7 @@ class MenuRegistry
      * @param float $priority
      * @param string|null $cssClass
      */
-    public function registerSubMenuItem(MenuItem $menuItem, array $items, ?string $url, float $priority = 0.0, ?string $cssClass): void
+    private function registerSubMenuItem(MenuItem $menuItem, array $items, ?string $url, float $priority = 0.0, ?string $cssClass): void
     {
         $label = array_shift($items);
 

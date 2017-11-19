@@ -41,7 +41,8 @@ class StaticRegistry implements PageRegistryInterface
         $block = new Block($this->themeRegistry->getThemeDescriptor($page->getTheme()), [
             'content' => [ $page->getContent() ],
             'title' => $page->getTitle(),
-            'url' => $page->getUrl()
+            'url' => $page->getUrl(),
+            'menu' => $this->pageRegistry->getRootMenuItem()
         ]);
 
         return $block;
