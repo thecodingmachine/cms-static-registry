@@ -22,6 +22,7 @@ class PageTest extends TestCase
         $this->assertSame('foo_theme', $page->getTheme());
         $this->assertSame('Foobar', $page->getContent());
         $this->assertSame('/foo/bar', $page->getUrl());
+        $this->assertSame([], $page->getContext());
     }
 
     public function testLoadMarkdownBlock()
