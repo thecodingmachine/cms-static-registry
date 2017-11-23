@@ -22,6 +22,9 @@ class PageTest extends TestCase
         $this->assertSame('foo_theme', $page->getTheme());
         $this->assertSame('Foobar', $page->getContent());
         $this->assertSame('/foo/bar', $page->getUrl());
+        $this->assertSame([
+            'bar' => 'baz'
+        ], $page->getContext());
     }
 
     public function testLoadMarkdownBlock()
@@ -47,5 +50,21 @@ class PageTest extends TestCase
     {
         $this->expectException(InvalidExtensionException::class);
         Page::fromFile(__FILE__);
+    }
+
+    public function testInherits()
+    {
+        $page = Page::fromFile(__DIR__.'/../fixtures/Loaders/inherited_pages/main.md');
+
+        $this->assertSame('foo', $page->getTitle());
+        $this->assertSame('fr', $page->getLang());
+        $this->assertSame('foo_theme', $page->getTheme());
+        $this->assertSame('/foo/bar/baz', $page->getUrl());
+    }
+
+    public function testInvalidInheritance()
+    {
+        $this->expectException(UnableToLoadFileException::class);
+        Page::fromFile(__DIR__.'/../fixtures/Loaders/inherited_pages/failed_inheritance.md');
     }
 }

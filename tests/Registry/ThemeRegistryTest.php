@@ -25,13 +25,16 @@ class ThemeRegistryTest extends TestCase
         $theme = $themeRegistry->getThemeDescriptor('foo_theme');
         /* @var $theme TwigThemeDescriptor */
         $this->assertInstanceOf(TwigThemeDescriptor::class, $theme);
-        $this->assertSame('foo_theme/index.twig', $theme->getTemplate());
+        $this->assertSame('index.twig', $theme->getTemplate());
+        $this->assertSame('foo_theme', $theme->getConfig()['theme']);
 
         $theme = $themeRegistry->getThemeDescriptor('foo_theme');
-        $this->assertSame('foo_theme/index.twig', $theme->getTemplate());
+        $this->assertSame('index.twig', $theme->getTemplate());
+        $this->assertSame('foo_theme', $theme->getConfig()['theme']);
 
         $theme = $themeRegistry->getThemeDescriptor('bar_theme');
-        $this->assertSame('bar_theme/index.twig', $theme->getTemplate());
+        $this->assertSame('index.twig', $theme->getTemplate());
+        $this->assertSame('bar_theme', $theme->getConfig()['theme']);
 
         $this->expectException(ThemeNotFoundException::class);
         $themeRegistry->getThemeDescriptor('no_theme');
@@ -51,10 +54,12 @@ class ThemeRegistryTest extends TestCase
         $theme = $themeRegistry->getThemeDescriptor('theme with header and footer only');
         /* @var $theme SubThemeDescriptor */
         $this->assertInstanceOf(SubThemeDescriptor::class, $theme);
-        $this->assertSame('foo_theme/index.twig', $theme->getThemeDescriptor()->getTemplate());
+        $this->assertSame('index.twig', $theme->getThemeDescriptor()->getTemplate());
+        $this->assertSame('foo_theme', $theme->getThemeDescriptor()->getConfig()['theme']);
 
         $theme = $themeRegistry->getThemeDescriptor('bar_subtheme');
-        $this->assertSame('foo_theme/index.twig', $theme->getThemeDescriptor()->getTemplate());
+        $this->assertSame('index.twig', $theme->getThemeDescriptor()->getTemplate());
+        $this->assertSame('foo_theme', $theme->getThemeDescriptor()->getConfig()['theme']);
 
         $theme = $themeRegistry->getThemeDescriptor('baz_theme');
         $this->assertSame($simplex['baz_theme'], $theme);

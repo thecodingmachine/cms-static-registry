@@ -90,12 +90,24 @@ The YAML frontmatter MUST be surrounded by `---`.
 
 Parameters of the YAML Frontmatter:
 
-Name      | Compulsory | Description
-----------|------------|------------------------
-url       | *Yes*      | The URL of the page. It contains only the *path*. For instance: `/foo/bar` 
-website   | *No*       | The domain name of the page. For instance: *example.com*
-lang      | *Yes*      | The language of the page, on 2 characters. For instance: "en", "fr"...
-title     | *Yes*      | The title of the page (goes into the &lt;title> HTML tag
-theme     | *No*       | The theme (or sub-theme) of the page (more about themes below)
+Name            | Compulsory | Description
+----------------|------------|------------------------
+url             | *Yes*      | The URL of the page. It contains only the *path*. For instance: `/foo/bar` 
+website         | *No*       | The domain name of the page. For instance: *example.com*
+lang            | *Yes*      | The language of the page, on 2 characters. For instance: "en", "fr"...
+title           | *Yes*      | The title of the page (goes into the &lt;title> HTML tag
+theme           | *No*       | The theme (or sub-theme) of the page (more about themes below)
+id              | *No*       | A unique ID for the page
+menu            | *No*       | The menu item. The path to the menu item is separated by '/'. For instance: 'Products / Food / Bananas'
+menu_order      | *No*       | The priority of the menu item
+menu_css_class  | *No*       | An optional CSS class to be applied to the menu item
+meta_title      | *No*       | The title &lt;meta&gt; tag
+meta_description | *No*       | The description &lt;meta&gt; tag
+theme           | *No*       | The theme to be used for this page
+template        | *No*       | The path to the Twig template applied for this page. Relative to the theme root directory. For instance: "blog.twig"
+context         | *No*       | An array of values passed to fill the Twig template.
+inherits        | *No*       | A reference to a YAML file that contains default values for the page. For instance: "../page_defaults.yml"
 
-TODO: continue documentation, migrate menu into an array, with inlined order. 
+
+
+TODO: continue documentation 

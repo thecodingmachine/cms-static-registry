@@ -35,14 +35,6 @@ class MenuItem {
     private $cssClass;
 
     /**
-     * Whether the menu is extended or not.
-     * This should not have an effect if the menu has no child.
-     *
-     * @var bool
-     */
-    private $isExtended;
-
-    /**
      * @param string $label The text for the menu item
      * @param string|null $url The link for the menu (relative to the root url), unless it starts with / or http:// or https:// or # or ?.
      */
@@ -70,7 +62,7 @@ class MenuItem {
 
     public function findChild(string $label): ?MenuItem
     {
-        foreach ($this->children as $child) {
+        foreach (clone $this->children as $child) {
             if ($child->getLabel() === $label) {
                 return $child;
             }
@@ -109,7 +101,7 @@ class MenuItem {
      * @return bool
      */
     public function isExtended(string $url): bool {
-        foreach ($this->children as $child) {
+        foreach (clone $this->children as $child) {
             if ($child->isActive($url) || $child->isExtended($url)) {
                 return true;
             }

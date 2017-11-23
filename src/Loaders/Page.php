@@ -2,6 +2,7 @@
 namespace TheCodingMachine\CMS\StaticRegistry\Loaders;
 
 use Mni\FrontYAML\Parser;
+use Symfony\Component\Yaml\Yaml;
 
 class Page
 {
@@ -53,11 +54,20 @@ class Page
      * @var null|string
      */
     private $menuCssClass;
+    /**
+     * @var null|string
+     */
+    private $template;
+    /**
+     * @var array
+     */
+    private $context;
 
     /**
      * @param string[]|null $menu
+     * @param mixed[] $context
      */
-    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme)
+    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme, ?string $template, array $context = [])
     {
         $this->id = $id;
         $this->title = $title;
@@ -71,6 +81,8 @@ class Page
         $this->metaTitle = $metaTitle;
         $this->metaDescription = $metaDescription;
         $this->theme = $theme;
+        $this->template = $template;
+        $this->context = $context;
     }
 
     public static function fromFile(string $file): self
@@ -98,6 +110,11 @@ class Page
 
         $yaml = $document->getYAML();
 
+        if (isset($yaml['inherits'])) {
+            $baseYaml = self::loadBaseYamlFile(dirname($file).'/'.$yaml['inherits']);
+            $yaml = self::mergeYaml($baseYaml, $yaml, dirname($file).'/'.$yaml['inherits']);
+        }
+
         $compulsoryFields = ['title', 'url', 'lang'];
 
         foreach ($compulsoryFields as $field) {
@@ -118,8 +135,50 @@ class Page
             $yaml['menu_css_class'] ?? null,
             $yaml['meta_title'] ?? null,
             $yaml['meta_description'] ?? null,
-            $yaml['theme'] ?? null
+            $yaml['theme'] ?? null,
+            $yaml['template'] ?? null,
+            $yaml['context'] ?? []
         );
+    }
+
+    /**
+     * @return mixed[]
+     * @throws UnableToLoadFileException
+     */
+    private static function loadBaseYamlFile(string $path): array
+    {
+        if (!is_readable($path)) {
+            throw new UnableToLoadFileException('Cannot read base page '.$path.' (used in "inherits" option)');
+        }
+
+        return Yaml::parse(file_get_contents($path));
+    }
+
+    /**
+     * @param mixed[] $baseYaml
+     * @param mixed[] $yaml
+     * @param string $file
+     * @return mixed[]
+     */
+    private static function mergeYaml(array $baseYaml, array $yaml, string $file): array
+    {
+        if (isset($baseYaml['inherits'])) {
+            $baseYaml2 = self::loadBaseYamlFile(dirname($file).'/'.$baseYaml['inherits']);
+            $baseYaml = self::mergeYaml($baseYaml2, $baseYaml, dirname($file).'/'.$baseYaml['inherits']);
+        }
+
+        $arrayMerger = new YamlUtils();
+        return $arrayMerger->mergeArrays($baseYaml, $yaml, [
+            'title' => YamlUtils::OVERRIDE,
+            'lang' => YamlUtils::OVERRIDE,
+            'website' => YamlUtils::OVERRIDE,
+            'menu_css_class' => YamlUtils::OVERRIDE,
+            'meta_title' => YamlUtils::OVERRIDE,
+            'meta_description' => YamlUtils::OVERRIDE,
+            'theme' => YamlUtils::OVERRIDE,
+            'template' => YamlUtils::OVERRIDE,
+            'context' => YamlUtils::MERGE_ARRAY,
+        ]);
     }
 
     /**
@@ -179,11 +238,11 @@ class Page
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getMenuOrder(): ?int
+    public function getMenuOrder(): int
     {
-        return $this->menuOrder;
+        return $this->menuOrder ?? 0;
     }
 
     /**
@@ -216,5 +275,21 @@ class Page
     public function getTheme(): ?string
     {
         return $this->theme;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getContext(): array
+    {
+        return $this->context;
     }
 }

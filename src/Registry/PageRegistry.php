@@ -115,12 +115,14 @@ class PageRegistry
             $pages = $this->getImportedPages();
             foreach ($pages as $pagesFromWebsite) {
                 foreach ($pagesFromWebsite as $page) {
-                    $menuRegistry->registerMenuItem(
-                        $page->getMenu(),
-                        $page->getUrl(),
-                        $page->getMenuOrder(),
-                        $page->getMenuCssClass()
-                    );
+                    if ($page->getMenu()) {
+                        $menuRegistry->registerMenuItem(
+                            $page->getMenu(),
+                            $page->getUrl(),
+                            $page->getMenuOrder(),
+                            $page->getMenuCssClass()
+                        );
+                    }
                 }
             }
             $this->rootMenuItem = $menuRegistry->getRootMenu();

@@ -28,5 +28,9 @@ class StaticRegistryTest extends TestCase
         $request = new ServerRequest([], [], new Uri('http://example.com/not/found'));
         $this->assertNull($staticPageRegistry->getPage($request));
 
+        $request = new ServerRequest([], [], new Uri('http://example.com/foo/bar/baz'));
+        $block = $staticPageRegistry->getPage($request);
+        $theme = $block->getThemeDescriptor();
+        $this->assertInstanceOf(TwigThemeDescriptor::class, $theme);
     }
 }
