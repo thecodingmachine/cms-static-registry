@@ -2,6 +2,7 @@
 namespace TheCodingMachine\CMS\StaticRegistry\Loaders;
 
 use Mni\FrontYAML\Parser;
+use Symfony\Component\Yaml\Yaml;
 
 class Page
 {
@@ -108,6 +109,11 @@ class Page
 
         $yaml = $document->getYAML();
 
+        if (isset($yaml['inherits'])) {
+            $baseYaml = self::loadBaseYamlFile(dirname($file).'/'.$yaml['inherits']);
+            $yaml = self::mergeYaml($baseYaml, $yaml, dirname($file).'/'.$yaml['inherits']);
+        }
+
         $compulsoryFields = ['title', 'url', 'lang'];
 
         foreach ($compulsoryFields as $field) {
@@ -132,6 +138,36 @@ class Page
             $yaml['template'] ?? null,
             $yaml['context'] ?? []
         );
+    }
+
+    private static function loadBaseYamlFile(string $path): array
+    {
+        if (!is_readable($path)) {
+            throw new UnableToLoadFileException('Cannot read base page '.$path.' (used in "inherits" option)');
+        }
+
+        return Yaml::parse(file_get_contents($path));
+    }
+
+    private static function mergeYaml(array $baseYaml, array $yaml, string $file): array
+    {
+        if (isset($baseYaml['inherits'])) {
+            $baseYaml2 = self::loadBaseYamlFile(dirname($file).'/'.$baseYaml['inherits']);
+            $baseYaml = self::mergeYaml($baseYaml2, $baseYaml, dirname($file).'/'.$baseYaml['inherits']);
+        }
+
+        $arrayMerger = new YamlUtils();
+        return $arrayMerger->mergeArrays($baseYaml, $yaml, [
+            'title' => YamlUtils::OVERRIDE,
+            'lang' => YamlUtils::OVERRIDE,
+            'website' => YamlUtils::OVERRIDE,
+            'menu_css_class' => YamlUtils::OVERRIDE,
+            'meta_title' => YamlUtils::OVERRIDE,
+            'meta_description' => YamlUtils::OVERRIDE,
+            'theme' => YamlUtils::OVERRIDE,
+            'template' => YamlUtils::OVERRIDE,
+            'context' => YamlUtils::MERGE_ARRAY,
+        ]);
     }
 
     /**
