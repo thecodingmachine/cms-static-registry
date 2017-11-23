@@ -83,7 +83,7 @@ class PageRegistry
             $this->pages = [];
             $fileList = new Finder();
 
-            $fileList->files()->in($this->pageDirectory)->sortByName();
+            $fileList->files()->in($this->pageDirectory)->name('/\.html$|\.md/')->sortByName();
 
             foreach ($fileList as $file) {
                 $importedPage = Page::fromFile($file->getRealPath());
