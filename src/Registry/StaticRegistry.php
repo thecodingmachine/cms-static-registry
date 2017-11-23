@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TheCodingMachine\CMS\Block\Block;
 use TheCodingMachine\CMS\Block\BlockInterface;
 use TheCodingMachine\CMS\Page\PageRegistryInterface;
+use TheCodingMachine\CMS\Theme\TwigThemeDescriptor;
 
 class StaticRegistry implements PageRegistryInterface
 {
@@ -38,13 +39,25 @@ class StaticRegistry implements PageRegistryInterface
             return null;
         }
 
-        $block = new Block($this->themeRegistry->getThemeDescriptor($page->getTheme()), [
-            'content' => [ $page->getContent() ],
+        $themeDescriptor = $this->themeRegistry->getThemeDescriptor($page->getTheme());
+
+        if ($page->getTemplate() !== null) {
+            $context = $page->getContext();
+            $context['content'][] = $page->getContent();
+            $contentBlock = new Block(new TwigThemeDescriptor($page->getTemplate(), [
+                'theme' => $themeDescriptor->getPath()
+            ]), $context);
+        } else {
+            $contentBlock = $page->getContent();
+        }
+
+        $pageBlock = new Block($themeDescriptor, [
+            'content' => [ $contentBlock ],
             'title' => $page->getTitle(),
             'url' => $page->getUrl(),
             'menu' => $this->pageRegistry->getRootMenuItem()
         ]);
 
-        return $block;
+        return $pageBlock;
     }
 }

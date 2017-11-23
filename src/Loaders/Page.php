@@ -53,11 +53,19 @@ class Page
      * @var null|string
      */
     private $menuCssClass;
+    /**
+     * @var null|string
+     */
+    private $template;
+    /**
+     * @var array
+     */
+    private $context;
 
     /**
      * @param string[]|null $menu
      */
-    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme)
+    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme, ?string $template, array $context = [])
     {
         $this->id = $id;
         $this->title = $title;
@@ -71,6 +79,8 @@ class Page
         $this->metaTitle = $metaTitle;
         $this->metaDescription = $metaDescription;
         $this->theme = $theme;
+        $this->template = $template;
+        $this->context = $context;
     }
 
     public static function fromFile(string $file): self
@@ -118,7 +128,9 @@ class Page
             $yaml['menu_css_class'] ?? null,
             $yaml['meta_title'] ?? null,
             $yaml['meta_description'] ?? null,
-            $yaml['theme'] ?? null
+            $yaml['theme'] ?? null,
+            $yaml['template'] ?? null,
+            $yaml['context'] ?? []
         );
     }
 
@@ -179,11 +191,11 @@ class Page
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getMenuOrder(): ?int
+    public function getMenuOrder(): int
     {
-        return $this->menuOrder;
+        return $this->menuOrder ?? 0;
     }
 
     /**
@@ -216,5 +228,21 @@ class Page
     public function getTheme(): ?string
     {
         return $this->theme;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    /**
+     * @return array
+     */
+    public function getContext(): array
+    {
+        return $this->context;
     }
 }

@@ -93,7 +93,9 @@ class ThemeRegistry
 
     private function themeToBlock(Theme $theme) : ThemeDescriptorInterface
     {
-        return new TwigThemeDescriptor($theme->getName().'/index.twig', []);
+        return new TwigThemeDescriptor('index.twig', [
+            'theme' => $theme->getName()
+        ]);
     }
 
     private function subThemeToBlock(SubTheme $subTheme) : ThemeDescriptorInterface
