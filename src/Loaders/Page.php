@@ -65,6 +65,7 @@ class Page
 
     /**
      * @param string[]|null $menu
+     * @param mixed[] $context
      */
     public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme, ?string $template, array $context = [])
     {
@@ -140,6 +141,10 @@ class Page
         );
     }
 
+    /**
+     * @return mixed[]
+     * @throws UnableToLoadFileException
+     */
     private static function loadBaseYamlFile(string $path): array
     {
         if (!is_readable($path)) {
@@ -149,6 +154,12 @@ class Page
         return Yaml::parse(file_get_contents($path));
     }
 
+    /**
+     * @param mixed[] $baseYaml
+     * @param mixed[] $yaml
+     * @param string $file
+     * @return mixed[]
+     */
     private static function mergeYaml(array $baseYaml, array $yaml, string $file): array
     {
         if (isset($baseYaml['inherits'])) {
@@ -275,7 +286,7 @@ class Page
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getContext(): array
     {

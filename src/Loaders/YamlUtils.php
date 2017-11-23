@@ -37,6 +37,11 @@ class YamlUtils
         return $yaml;
     }
 
+    /**
+     * @param mixed[] $base
+     * @param mixed[] $target
+     * @return mixed[]
+     */
     private function recursiveMerge(array $base, array $target): array
     {
         if (!$this->isAssoc($base) && !$this->isAssoc($target)) {
