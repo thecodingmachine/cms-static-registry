@@ -38,4 +38,10 @@ class PageRegistryTest extends TestCase
         $this->assertCount(2, $menuItem->getChildren()[0]->getChildren()[0]->getChildren());
     }
 
+    public function testFindPagesByTag()
+    {
+        $pageRegistry = new PageRegistry(__DIR__ . '/../fixtures/Loaders/pages', new ArrayCache());
+        $pages = $pageRegistry->findPagesByTag('foo', 'example.com');
+        $this->assertCount(2, $pages);
+    }
 }

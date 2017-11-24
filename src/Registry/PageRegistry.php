@@ -60,6 +60,40 @@ class PageRegistry
     }
 
     /**
+     * @param string $tag
+     * @param string $domain
+     * @return Page[]
+     */
+    public function findPagesByTag(string $tag, string $domain): array
+    {
+        $pages = $this->getImportedPagesFromCache();
+
+        $pagesForDomain = $this->findPagesByTagAndDomain($pages, $tag, $domain);
+        $pagesForAnyDomain = $this->findPagesByTagAndDomain($pages, $tag, '<any>');
+
+        return array_merge($pagesForDomain, $pagesForAnyDomain);
+    }
+
+    /**
+     * @param Page[][] $pages
+     * @param string $tag
+     * @param string $domain
+     * @return Page[]
+     */
+    private function findPagesByTagAndDomain(array $pages, string $tag, string $domain): array
+    {
+        $taggedPages = [];
+        if (isset($pages[$domain])) {
+            foreach ($pages[$domain] as $page) {
+                if (in_array($tag, $page->getTags(), true)) {
+                    $taggedPages[] = $page;
+                }
+            }
+        }
+        return $taggedPages;
+    }
+
+    /**
      * @return Page[][]
      */
     private function getImportedPagesFromCache(): array

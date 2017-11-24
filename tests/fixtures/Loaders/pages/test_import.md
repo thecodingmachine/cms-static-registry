@@ -7,6 +7,8 @@ menu_order : 2
 lang : fr
 theme : foo_theme
 url: foo/bar/baz
+tags:
+ - foo
 
 ---
 
