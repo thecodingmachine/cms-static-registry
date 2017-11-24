@@ -60,6 +60,7 @@ class PageTest extends TestCase
         $this->assertSame('fr', $page->getLang());
         $this->assertSame('foo_theme', $page->getTheme());
         $this->assertSame('/foo/bar/baz', $page->getUrl());
+        $this->assertSame(['blog'], $page->getTags());
     }
 
     public function testInvalidInheritance()
