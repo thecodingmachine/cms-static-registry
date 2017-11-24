@@ -26,7 +26,11 @@ class YamlUtils
                     break;
                 case self::MERGE_ARRAY:
                     if (isset($baseYaml[$key])) {
-                        $yaml[$key] = $this->recursiveMerge($baseYaml[$key], $yaml[$key]);
+                        if (isset($yaml[$key])) {
+                            $yaml[$key] = $this->recursiveMerge($baseYaml[$key], $yaml[$key]);
+                        } else {
+                            $yaml[$key] = $baseYaml[$key];
+                        }
                     }
                     break;
                 default:

@@ -18,7 +18,8 @@ class YamlUtilsTest extends TestCase
                 'foobar' => [
                     'one' => 'two'
                 ]
-            ]
+            ],
+            'tags' => ['blog']
         ], [
             'title' => 'bar',
             'lang' => 'fr',
@@ -39,6 +40,7 @@ class YamlUtilsTest extends TestCase
             'theme' => YamlUtils::OVERRIDE,
             'template' => YamlUtils::OVERRIDE,
             'context' => YamlUtils::MERGE_ARRAY,
+            'tags' => YamlUtils::MERGE_ARRAY,
         ]);
 
         $this->assertSame([
@@ -53,6 +55,7 @@ class YamlUtilsTest extends TestCase
                 ]
             ],
             'website' => 'example.com',
+            'tags' => ['blog']
         ], $result);
     }
 }

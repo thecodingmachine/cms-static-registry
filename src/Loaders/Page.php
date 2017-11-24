@@ -62,12 +62,17 @@ class Page
      * @var array
      */
     private $context;
+    /**
+     * @var string[]
+     */
+    private $tags;
 
     /**
      * @param string[]|null $menu
      * @param mixed[] $context
+     * @param string[] $tags
      */
-    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme, ?string $template, array $context = [])
+    public function __construct(?string $id, string $title, string $content, string $url, string $lang, ?string $website, ?array $menu, ?int $menuOrder, ?string $menuCssClass, ?string $metaTitle, ?string $metaDescription, ?string $theme, ?string $template, array $context = [], array $tags = [])
     {
         $this->id = $id;
         $this->title = $title;
@@ -83,6 +88,7 @@ class Page
         $this->theme = $theme;
         $this->template = $template;
         $this->context = $context;
+        $this->tags = $tags;
     }
 
     public static function fromFile(string $file): self
@@ -137,7 +143,8 @@ class Page
             $yaml['meta_description'] ?? null,
             $yaml['theme'] ?? null,
             $yaml['template'] ?? null,
-            $yaml['context'] ?? []
+            $yaml['context'] ?? [],
+            $yaml['tags'] ?? []
         );
     }
 
@@ -178,6 +185,7 @@ class Page
             'theme' => YamlUtils::OVERRIDE,
             'template' => YamlUtils::OVERRIDE,
             'context' => YamlUtils::MERGE_ARRAY,
+            'tags' => YamlUtils::MERGE_ARRAY,
         ]);
     }
 
@@ -291,5 +299,13 @@ class Page
     public function getContext(): array
     {
         return $this->context;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
     }
 }
