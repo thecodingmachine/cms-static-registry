@@ -8,6 +8,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use TheCodingMachine\CMS\Block\Block;
 use TheCodingMachine\CMS\Block\BlockInterface;
 use TheCodingMachine\CMS\Page\PageRegistryInterface;
+use TheCodingMachine\CMS\StaticRegistry\Twig\CmsPageExtension;
+use TheCodingMachine\CMS\StaticRegistry\Twig\Context;
 use TheCodingMachine\CMS\Theme\TwigThemeDescriptor;
 
 class StaticRegistry implements PageRegistryInterface

@@ -64,14 +64,21 @@ class PageRegistry
      * @param string $domain
      * @return Page[]
      */
-    public function findPagesByTag(string $tag, string $domain): array
+    public function findPagesByTag(string $tag, ?string $domain): array
     {
         $pages = $this->getImportedPagesFromCache();
 
-        $pagesForDomain = $this->findPagesByTagAndDomain($pages, $tag, $domain);
-        $pagesForAnyDomain = $this->findPagesByTagAndDomain($pages, $tag, '<any>');
-
-        return array_merge($pagesForDomain, $pagesForAnyDomain);
+        if ($domain === null) {
+            $pagesArrByTag = [];
+            foreach ($pages as $domainKey => $pagesPerDomain) {
+                $pagesArrByTag[] = $this->findPagesByTagAndDomain($pages, $tag, $domainKey);
+            }
+            return array_merge(...$pagesArrByTag);
+        } else {
+            $pagesForDomain = $this->findPagesByTagAndDomain($pages, $tag, $domain);
+            $pagesForAnyDomain = $this->findPagesByTagAndDomain($pages, $tag, '<any>');
+            return array_merge($pagesForDomain, $pagesForAnyDomain);
+        }
     }
 
     /**

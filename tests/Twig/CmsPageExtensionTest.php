@@ -1,40 +1,51 @@
 <?php
 
-namespace TheCodingMachine\CMS\StaticRegistry\DI;
+namespace TheCodingMachine\CMS\StaticRegistry\Twig;
 
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 use Simplex\Container;
 use Symfony\Component\Cache\Simple\ArrayCache;
+use TheCodingMachine\CMS\Block\BlockRendererInterface;
+use TheCodingMachine\CMS\DI\CMSUtilsServiceProvider;
+use TheCodingMachine\CMS\StaticRegistry\DI\StaticRegistryServiceProvider;
 use TheCodingMachine\CMS\StaticRegistry\Registry\StaticRegistry;
-use TheCodingMachine\CMS\Theme\TwigThemeDescriptor;
 use TheCodingMachine\TwigServiceProvider;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 
-class StaticRegistryServiceProviderTest extends TestCase
+class CmsPageExtensionTest extends TestCase
 {
     public function testServiceProvider()
     {
         $simplex = new Container([
             new TwigServiceProvider(),
+            new CMSUtilsServiceProvider(),
             new StaticRegistryServiceProvider()
         ]);
 
         $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
+        $simplex->set('THEMES_URL', '/themes/');
         $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
 
         $staticRegistry = $simplex->get(StaticRegistry::class);
         /* @var $staticRegistry StaticRegistry */
-        $request = new ServerRequest([], [], new Uri('http://example.com/foo/bar'));
+        $request = new ServerRequest([], [], new Uri('http://example.com/foo/twig'));
+
         $block = $staticRegistry->getPage($request);
+        $blockRenderer = $simplex->get(BlockRendererInterface::class);
+        /* @var $blockRenderer \TheCodingMachine\CMS\Block\BlockRendererInterface */
+        $result = $blockRenderer->renderBlock($block);
 
-        $theme = $block->getThemeDescriptor();
-        $this->assertInstanceOf(TwigThemeDescriptor::class, $theme);
+        $this->assertSame(
+<<<EOF
+fr
+en
 
-        // Let's check Twig is properly configured and can load Twig files from the themes directory.
-        $twig = $simplex->get(\Twig_Environment::class);
-        /* @var $twig \Twig_Environment */
-        $this->assertTrue($twig->getLoader()->exists('foo_theme/index.twig'));
+/foo/bar
+/foo/bar/baz
+EOF
+            , (string)$result->getContents());
     }
+
 }
