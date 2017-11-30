@@ -148,7 +148,7 @@ class Block
         if ($this->getTemplate() !== null) {
             $context = $this->getContext();
             $context['content'][] = $this->getContent();
-            return new \TheCodingMachine\CMS\Block\Block(new TwigThemeDescriptor($page->getTemplate(), [
+            return new \TheCodingMachine\CMS\Block\Block(new TwigThemeDescriptor($this->getTemplate(), [
                 'theme' => $themePath
             ]), $context);
         } else {

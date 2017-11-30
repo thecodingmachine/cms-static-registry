@@ -61,7 +61,7 @@ class PageRegistry
 
     /**
      * @param string $tag
-     * @param string $domain
+     * @param string|null $domain
      * @return Page[]
      */
     public function findPagesByTag(string $tag, ?string $domain): array

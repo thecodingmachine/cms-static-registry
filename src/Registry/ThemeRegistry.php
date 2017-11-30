@@ -114,12 +114,10 @@ class ThemeRegistry
     private function getThemePath(SubTheme $subTheme): string
     {
         $subThemes = $this->getSubThemes();
-        while (true) {
-            $parentName = $subTheme->getParent();
-            if (!isset($subThemes[$parentName])) {
-                break;
-            }
+        $parentName = $subTheme->getParent();
+        while (isset($subThemes[$parentName])) {
             $subTheme = $subThemes[$parentName];
+            $parentName = $subTheme->getParent();
         }
         return $parentName;
     }

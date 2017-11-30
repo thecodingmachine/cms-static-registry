@@ -8,6 +8,7 @@ use Barclays\Dao\StaticBlockDao;
 use Barclays\Model\BaseBlock;
 use Barclays\Model\PageVersion;
 use Barclays\Services\SerializationContext;
+use TheCodingMachine\CMS\CMSException;
 use TheCodingMachine\CMS\StaticRegistry\Loaders\Block;
 use TheCodingMachine\CMS\StaticRegistry\Loaders\Page;
 use TheCodingMachine\CMS\StaticRegistry\Registry\BlockRegistry;
@@ -60,7 +61,7 @@ class CmsPageExtension extends \Twig_Extension
     public function getCmsPagesByTag(string $tag, ?string $domain = null, string $orderBy = 'date', string $direction = 'desc', int $limit = null, int $page = null): array
     {
         if (!in_array($direction, ['asc', 'desc'])) {
-            return ["Error while using getCmsPagesByTag. The third parameter (direction) must be either 'asc' or 'desc'."];
+            throw new CMSException("Error while using getCmsPagesByTag. The third parameter (direction) must be either 'asc' or 'desc'.");
         }
 
         $pages = $this->pageRegistry->findPagesByTag($tag, $domain);
