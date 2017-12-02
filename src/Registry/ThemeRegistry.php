@@ -101,10 +101,11 @@ class ThemeRegistry
     private function subThemeToBlock(SubTheme $subTheme) : ThemeDescriptorInterface
     {
         $context = [];
+        $themePath = $this->getThemePath($subTheme);
         foreach ($subTheme->getAssignations() as $zone => $blocks) {
             foreach ($blocks as $blockName) {
                 foreach ($this->blockRegistry->getBlocks($blockName) as $block) {
-                    $context[$zone][] = $block->toCmsBlock($this->getThemePath($subTheme));
+                    $context[$zone][] = $block->toCmsBlock($themePath);
                 }
             }
         }

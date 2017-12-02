@@ -51,11 +51,11 @@ class ThemeRegistryTest extends TestCase
         });
         $blockRegistry = new BlockRegistry(__DIR__ . '/../fixtures/Loaders/blocks', $simplex, new ArrayCache());
         $themeRegistry = new ThemeRegistry(__DIR__ . '/../fixtures/Loaders/public/themes', __DIR__ . '/../fixtures/Loaders/sub_themes', $simplex, new ArrayCache(), $blockRegistry);
-        $theme = $themeRegistry->getThemeDescriptor('theme with header and footer only');
+        $theme = $themeRegistry->getThemeDescriptor('left block');
         /* @var $theme SubThemeDescriptor */
         $this->assertInstanceOf(SubThemeDescriptor::class, $theme);
-        $this->assertSame('index.twig', $theme->getThemeDescriptor()->getTemplate());
-        $this->assertSame('foo_theme', $theme->getThemeDescriptor()->getConfig()['theme']);
+        $this->assertSame('index.twig', $theme->getThemeDescriptor()->getThemeDescriptor()->getTemplate());
+        $this->assertSame('foo_theme', $theme->getThemeDescriptor()->getThemeDescriptor()->getConfig()['theme']);
 
         $theme = $themeRegistry->getThemeDescriptor('bar_subtheme');
         $this->assertSame('index.twig', $theme->getThemeDescriptor()->getTemplate());
