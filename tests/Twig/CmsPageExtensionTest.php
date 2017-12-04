@@ -49,7 +49,7 @@ EOF
             , (string)$result->getContents());
     }
 
-    public function testSort()
+    public function testPageSort()
     {
         $simplex = new Container([
             new TwigServiceProvider(),
@@ -75,6 +75,34 @@ EOF
 
         $this->expectException(CMSException::class);
         $pages = $cmsExtension->getCmsPagesByTag('foo', null, 'date', 'foo');
+    }
+
+    public function testBlockSort()
+    {
+        $simplex = new Container([
+            new TwigServiceProvider(),
+            new CMSUtilsServiceProvider(),
+            new StaticRegistryServiceProvider()
+        ]);
+
+        $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
+        $simplex->set('THEMES_URL', '/themes/');
+        $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
+
+        $cmsExtension = $simplex->get(CmsPageExtension::class);
+        /* @var $cmsExtension CmsPageExtension */
+        $blocks = $cmsExtension->getCmsBlocksByTag('bar', 'date', 'asc', 1, 1);
+
+        $this->assertCount(1, $blocks);
+        $this->assertSame('my_block', $blocks[0]->getId());
+
+        $blocks = $cmsExtension->getCmsBlocksByTag('bar', 'date', 'desc', 1, 1);
+
+        $this->assertCount(1, $blocks);
+        $this->assertSame('logo', $blocks[0]->getId());
+
+        $this->expectException(CMSException::class);
+        $cmsExtension->getCmsBlocksByTag('bar', 'date', 'foo');
     }
 
 }
