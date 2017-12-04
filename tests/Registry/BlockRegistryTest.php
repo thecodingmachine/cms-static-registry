@@ -30,4 +30,19 @@ class BlockRegistryTest extends TestCase
         $this->expectException(BlockNotFoundException::class);
         $blockRegistry->getBlocks('no_block');
     }
+
+    public function testFindBlocksByTag()
+    {
+        $simplex = new Container();
+        $blockRegistry = new BlockRegistry(__DIR__.'/../fixtures/Loaders/blocks', $simplex, new ArrayCache());
+
+        $blocks = $blockRegistry->findBlocksByTag('foo');
+        $this->assertCount(3, $blocks);
+
+        $blocks = $blockRegistry->findBlocksByTag('bar');
+        $this->assertCount(2, $blocks);
+
+        $blocks = $blockRegistry->findBlocksByTag('not_exist');
+        $this->assertCount(0, $blocks);
+    }
 }

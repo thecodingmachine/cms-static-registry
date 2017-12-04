@@ -99,4 +99,21 @@ class BlockRegistry
         }
         return $this->blocks;
     }
+
+    /**
+     * @param string $tag
+     * @return Block[]
+     */
+    public function findBlocksByTag(string $tag): array
+    {
+        $blocks = $this->loadBlocks();
+
+        $filteredBlocks = [];
+        foreach ($blocks as $blockArray) {
+            $filteredBlocks = array_merge($filteredBlocks, array_filter($blockArray, function(Block $block) use ($tag) {
+                return in_array($tag, $block->getTags(), true);
+            }));
+        }
+        return $filteredBlocks;
+    }
 }
