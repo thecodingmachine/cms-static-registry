@@ -3,6 +3,8 @@ namespace TheCodingMachine\CMS\StaticRegistry\Loaders;
 
 use Mni\FrontYAML\Parser;
 use \SplFileInfo;
+use TheCodingMachine\CMS\Block\BlockInterface;
+use TheCodingMachine\CMS\Theme\TwigThemeDescriptor;
 
 class Block
 {
@@ -23,16 +25,27 @@ class Block
      * @var array|string[]
      */
     private $tags;
+    /**
+     * @var null|string
+     */
+    private $template;
+    /**
+     * @var array|mixed[]
+     */
+    private $context;
 
     /**
      * @param string[] $tags
+     * @param mixed[] $context
      */
-    public function __construct(string $id, string $content, string $lang, array $tags)
+    public function __construct(string $id, string $content, string $lang, array $tags, ?string $template, array $context = [])
     {
         $this->id = $id;
         $this->content = $content;
         $this->lang = $lang;
         $this->tags = $tags;
+        $this->template = $template;
+        $this->context = $context;
     }
 
     public static function fromFile(SplFileInfo $file): self
@@ -72,7 +85,9 @@ class Block
             $yaml['id'],
             $document->getContent(),
             $yaml['lang'],
-            $yaml['tags'] ?? []
+            $yaml['tags'] ?? [],
+            $yaml['template'] ?? null,
+            $yaml['context'] ?? []
         );
     }
 
@@ -106,5 +121,38 @@ class Block
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    /**
+     * @return array|mixed[]
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param string $themePath
+     * @return BlockInterface|string
+     */
+    public function toCmsBlock(string $themePath)
+    {
+        if ($this->getTemplate() !== null) {
+            $context = $this->getContext();
+            $context['content'][] = $this->getContent();
+            return new \TheCodingMachine\CMS\Block\Block(new TwigThemeDescriptor($this->getTemplate(), [
+                'theme' => $themePath
+            ]), $context);
+        } else {
+            return $this->getContent();
+        }
     }
 }

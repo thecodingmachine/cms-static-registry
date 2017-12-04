@@ -1,0 +1,5 @@
+{% for block in cmsBlocksById('my_block') %}{{ block.lang }}
+{% endfor %}
+
+{% for page in cmsPagesByTag('foo') %}{{ page.url }}
+{% endfor %}

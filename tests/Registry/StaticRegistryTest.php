@@ -5,6 +5,7 @@ namespace TheCodingMachine\CMS\StaticRegistry\Registry;
 use PHPUnit\Framework\TestCase;
 use Simplex\Container;
 use Symfony\Component\Cache\Simple\ArrayCache;
+use TheCodingMachine\CMS\Theme\SubThemeDescriptor;
 use TheCodingMachine\CMS\Theme\TwigThemeDescriptor;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
@@ -31,6 +32,6 @@ class StaticRegistryTest extends TestCase
         $request = new ServerRequest([], [], new Uri('http://example.com/foo/bar/baz'));
         $block = $staticPageRegistry->getPage($request);
         $theme = $block->getThemeDescriptor();
-        $this->assertInstanceOf(TwigThemeDescriptor::class, $theme);
+        $this->assertInstanceOf(SubThemeDescriptor::class, $theme);
     }
 }

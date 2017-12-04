@@ -16,9 +16,10 @@ class StaticRegistryServiceProviderTest extends TestCase
 {
     public function testServiceProvider()
     {
-        $simplex = new Container();
-        $simplex->register(new TwigServiceProvider());
-        $simplex->register(new StaticRegistryServiceProvider());
+        $simplex = new Container([
+            new TwigServiceProvider(),
+            new StaticRegistryServiceProvider()
+        ]);
 
         $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
         $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });

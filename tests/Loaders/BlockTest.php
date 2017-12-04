@@ -17,6 +17,8 @@ class BlockTest extends TestCase
         $this->assertSame('fr', $block->getLang());
         $this->assertSame('Foobar', $block->getContent());
         $this->assertSame(['foo', 'bar'], $block->getTags());
+        $this->assertSame('block.twig', $block->getTemplate());
+        $this->assertSame(['date' => strtotime('2017-12-12')], $block->getContext());
     }
 
     public function testLoadMarkdownBlock()

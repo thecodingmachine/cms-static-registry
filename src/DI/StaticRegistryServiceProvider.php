@@ -7,6 +7,7 @@ use TheCodingMachine\CMS\StaticRegistry\Registry\BlockRegistry;
 use TheCodingMachine\CMS\StaticRegistry\Registry\PageRegistry;
 use TheCodingMachine\CMS\StaticRegistry\Registry\StaticRegistry;
 use TheCodingMachine\CMS\StaticRegistry\Registry\ThemeRegistry;
+use TheCodingMachine\CMS\StaticRegistry\Twig\CmsPageExtension;
 use TheCodingMachine\Funky\Annotations\Extension;
 use TheCodingMachine\Funky\Annotations\Factory;
 use TheCodingMachine\Funky\ServiceProvider;
@@ -92,5 +93,26 @@ class StaticRegistryServiceProvider extends ServiceProvider
     {
         $loaders[] = new \Twig_Loader_Filesystem($THEMES_PATH);
         return $loaders;
+    }
+
+    /**
+     * @Factory()
+     * @return CmsPageExtension
+     */
+    public static function getCmsPageExtension(PageRegistry $pageRegistry, BlockRegistry $blockRegistry): CmsPageExtension
+    {
+        return new CmsPageExtension($pageRegistry, $blockRegistry);
+    }
+
+    /**
+     * @Extension(nameFromMethodName=true)
+     * @param \Twig_ExtensionInterface[] $extensions
+     * @param CmsPageExtension $cmsPageExtension
+     * @return \Twig_ExtensionInterface[]
+     */
+    public static function twig_extensions(?array $extensions, CmsPageExtension $cmsPageExtension): array
+    {
+        $extensions[] = $cmsPageExtension;
+        return $extensions;
     }
 }

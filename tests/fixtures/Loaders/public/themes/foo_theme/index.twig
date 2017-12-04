@@ -1,0 +1,8 @@
+{% spaceless %}
+{% for block in header_left %}
+    {{ block | raw }}
+{% endfor %}
+{% for block in content %}
+    {{ block | raw }}
+{% endfor %}
+{% endspaceless %}

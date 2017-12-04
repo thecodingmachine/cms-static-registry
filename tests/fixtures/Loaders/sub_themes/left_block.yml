@@ -1,0 +1,5 @@
+name: left block
+parent: theme with header and footer only
+assignations:
+  header_left:
+    - my_block

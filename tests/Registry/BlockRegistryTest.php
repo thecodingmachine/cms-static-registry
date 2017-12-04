@@ -15,7 +15,7 @@ class BlockRegistryTest extends TestCase
     {
         $simplex = new Container();
         $simplex->set('bar_block', function() {
-            return new Block('bar_block', 'foo', 'fr', []);
+            return new Block('bar_block', 'foo', 'fr', [], null, []);
         });
         $blockRegistry = new BlockRegistry(__DIR__.'/../fixtures/Loaders/blocks', $simplex, new ArrayCache());
         $blocks = $blockRegistry->getBlocks('my_block');

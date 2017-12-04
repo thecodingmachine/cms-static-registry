@@ -101,16 +101,26 @@ class ThemeRegistry
     private function subThemeToBlock(SubTheme $subTheme) : ThemeDescriptorInterface
     {
         $context = [];
+        $themePath = $this->getThemePath($subTheme);
         foreach ($subTheme->getAssignations() as $zone => $blocks) {
             foreach ($blocks as $blockName) {
                 foreach ($this->blockRegistry->getBlocks($blockName) as $block) {
-                    // FIXME: here we should insert a CONDITIONAL block that displays only when the correct language is set.
-                    // Also, we should render the block based on a Twig template if a twig template is passed to the block.
-                    $context[$zone][] = $block->getContent();
+                    $context[$zone][] = $block->toCmsBlock($themePath);
                 }
             }
         }
-        return new SubThemeDescriptor($this->getThemeNoCache($subTheme->getParent()), $context);
+        return new SubThemeDescriptor($this->getThemeDescriptor($subTheme->getParent()), $context);
+    }
+
+    private function getThemePath(SubTheme $subTheme): string
+    {
+        $subThemes = $this->getSubThemes();
+        $parentName = $subTheme->getParent();
+        while (isset($subThemes[$parentName])) {
+            $subTheme = $subThemes[$parentName];
+            $parentName = $subTheme->getParent();
+        }
+        return $parentName;
     }
 
     /**
