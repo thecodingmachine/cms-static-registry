@@ -9,6 +9,8 @@ theme : theme with header and footer only
 url: foo/bar/baz
 tags:
  - foo
+context:
+ date: 2017-01-02
 
 ---
 

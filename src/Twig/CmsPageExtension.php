@@ -56,23 +56,36 @@ class CmsPageExtension extends \Twig_Extension
     }
 
     /**
+     * @param string $tag
+     * @param null|string $domain
+     * @param string $orderBy One of the properties of the context. For instance, if you set this to 'date', it means you should add a "date" key to your context it you want to sort upon it.
+     * @param string $direction
+     * @param int|null $limit
+     * @param int|null $offset
      * @return Page[]
+     * @throws CMSException
      */
-    public function getCmsPagesByTag(string $tag, ?string $domain = null, string $orderBy = 'date', string $direction = 'desc', int $limit = null, int $page = null): array
+    public function getCmsPagesByTag(string $tag, ?string $domain = null, ?string $orderBy = null, string $direction = 'desc', int $limit = null, int $offset = null): array
     {
-        if (!in_array($direction, ['asc', 'desc'])) {
+        if (!\in_array($direction, ['asc', 'desc'], true)) {
             throw new CMSException("Error while using getCmsPagesByTag. The third parameter (direction) must be either 'asc' or 'desc'.");
         }
 
         $pages = $this->pageRegistry->findPagesByTag($tag, $domain);
 
-        /*if ($limit !== null || $page !== null) {
-            $blocks = $blocks->take(($page !== null) ? $page*$limit : null, $limit);
-            $count = $blocks->totalCount();
-        } else {
-            $count = $blocks->count();
-        }*/
+        if ($orderBy !== null) {
+            usort($pages, function(Page $page1, Page $page2) use ($orderBy, $direction) {
+                if ($direction === 'asc') {
+                    return ($page1->getContext()[$orderBy] ?? null) <=> ($page2->getContext()[$orderBy] ?? null);
+                } else {
+                    return ($page2->getContext()[$orderBy] ?? null) <=> ($page1->getContext()[$orderBy] ?? null);
+                }
+            });
+        }
 
+        if ($limit !== null || $offset !== null) {
+            $pages = \array_slice($pages, $offset, $limit);
+        }
 
         return $pages;
     }

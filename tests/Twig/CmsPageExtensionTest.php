@@ -7,6 +7,7 @@ use Psr\SimpleCache\CacheInterface;
 use Simplex\Container;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use TheCodingMachine\CMS\Block\BlockRendererInterface;
+use TheCodingMachine\CMS\CMSException;
 use TheCodingMachine\CMS\DI\CMSUtilsServiceProvider;
 use TheCodingMachine\CMS\StaticRegistry\DI\StaticRegistryServiceProvider;
 use TheCodingMachine\CMS\StaticRegistry\Registry\StaticRegistry;
@@ -46,6 +47,34 @@ en
 /foo/bar/baz
 EOF
             , (string)$result->getContents());
+    }
+
+    public function testSort()
+    {
+        $simplex = new Container([
+            new TwigServiceProvider(),
+            new CMSUtilsServiceProvider(),
+            new StaticRegistryServiceProvider()
+        ]);
+
+        $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
+        $simplex->set('THEMES_URL', '/themes/');
+        $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
+
+        $cmsExtension = $simplex->get(CmsPageExtension::class);
+        /* @var $cmsExtension CmsPageExtension */
+        $pages = $cmsExtension->getCmsPagesByTag('foo', null, 'date', 'asc', 1, 1);
+
+        $this->assertCount(1, $pages);
+        $this->assertSame('/foo/bar/baz', $pages[0]->getUrl());
+
+        $pages = $cmsExtension->getCmsPagesByTag('foo', null, 'date', 'desc', 1, 1);
+
+        $this->assertCount(1, $pages);
+        $this->assertSame('/foo/bar', $pages[0]->getUrl());
+
+        $this->expectException(CMSException::class);
+        $pages = $cmsExtension->getCmsPagesByTag('foo', null, 'date', 'foo');
     }
 
 }
