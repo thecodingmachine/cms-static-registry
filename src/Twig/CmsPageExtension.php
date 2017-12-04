@@ -42,6 +42,7 @@ class CmsPageExtension extends \Twig_Extension
         return [
             new \Twig_Function('cmsBlocksById', [$this, 'getCmsBlocksById']),
             new \Twig_Function('cmsPagesByTag', [$this, 'getCmsPagesByTag']),
+            new \Twig_Function('cmsBlocksByTag', [$this, 'getCmsBlocksByTag']),
         ];
     }
 
@@ -68,7 +69,7 @@ class CmsPageExtension extends \Twig_Extension
     public function getCmsPagesByTag(string $tag, ?string $domain = null, ?string $orderBy = null, string $direction = 'desc', int $limit = null, int $offset = null): array
     {
         if (!\in_array($direction, ['asc', 'desc'], true)) {
-            throw new CMSException("Error while using getCmsPagesByTag. The third parameter (direction) must be either 'asc' or 'desc'.");
+            throw new CMSException("Error while using getCmsPagesByTag. The fourth parameter (direction) must be either 'asc' or 'desc'.");
         }
 
         $pages = $this->pageRegistry->findPagesByTag($tag, $domain);
@@ -88,5 +89,39 @@ class CmsPageExtension extends \Twig_Extension
         }
 
         return $pages;
+    }
+
+    /**
+     * @param string $tag
+     * @param string $orderBy One of the properties of the context. For instance, if you set this to 'date', it means you should add a "date" key to your context it you want to sort upon it.
+     * @param string $direction
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return Block[]
+     * @throws CMSException
+     */
+    public function getCmsBlocksByTag(string $tag, ?string $orderBy = null, string $direction = 'desc', int $limit = null, int $offset = null): array
+    {
+        if (!\in_array($direction, ['asc', 'desc'], true)) {
+            throw new CMSException("Error while using getCmsBlocksByTag. The third parameter (direction) must be either 'asc' or 'desc'.");
+        }
+
+        $blocks = $this->blockRegistry->findBlocksByTag($tag);
+
+        if ($orderBy !== null) {
+            usort($blocks, function(Block $block1, Block $block2) use ($orderBy, $direction) {
+                if ($direction === 'asc') {
+                    return ($block1->getContext()[$orderBy] ?? null) <=> ($block2->getContext()[$orderBy] ?? null);
+                } else {
+                    return ($block2->getContext()[$orderBy] ?? null) <=> ($block1->getContext()[$orderBy] ?? null);
+                }
+            });
+        }
+
+        if ($limit !== null || $offset !== null) {
+            $blocks = \array_slice($blocks, $offset, $limit);
+        }
+
+        return $blocks;
     }
 }
