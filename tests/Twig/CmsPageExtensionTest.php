@@ -25,6 +25,7 @@ class CmsPageExtensionTest extends TestCase
             new StaticRegistryServiceProvider()
         ]);
 
+        $simplex->set('ROOT_URL', '/');
         $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
         $simplex->set('THEMES_URL', '/themes/');
         $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
@@ -57,6 +58,7 @@ EOF
             new StaticRegistryServiceProvider()
         ]);
 
+        $simplex->set('ROOT_URL', '/');
         $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
         $simplex->set('THEMES_URL', '/themes/');
         $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
@@ -85,6 +87,7 @@ EOF
             new StaticRegistryServiceProvider()
         ]);
 
+        $simplex->set('ROOT_URL', '/');
         $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
         $simplex->set('THEMES_URL', '/themes/');
         $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
@@ -105,4 +108,48 @@ EOF
         $cmsExtension->getCmsBlocksByTag('bar', 'date', 'foo');
     }
 
+    public function testUrl()
+    {
+        $simplex = new Container([
+            new TwigServiceProvider(),
+            new CMSUtilsServiceProvider(),
+            new StaticRegistryServiceProvider()
+        ]);
+
+        $simplex->set('ROOT_URL', '/bar/');
+        $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
+        $simplex->set('THEMES_URL', '/themes/');
+        $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
+
+        $cmsExtension = $simplex->get(CmsPageExtension::class);
+        /* @var $cmsExtension CmsPageExtension */
+        $url = $cmsExtension->getUrl('/foo');
+        $this->assertSame('/bar/foo', $url);
+
+        $url = $cmsExtension->getUrl('https://foo');
+        $this->assertSame('https://foo', $url);
+
+        $url = $cmsExtension->getUrl(null);
+        $this->assertNull($url);
+
+    }
+
+    public function testGetCmsPageByUrl()
+    {
+        $simplex = new Container([
+            new TwigServiceProvider(),
+            new CMSUtilsServiceProvider(),
+            new StaticRegistryServiceProvider()
+        ]);
+
+        $simplex->set('ROOT_URL', '/bar/');
+        $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
+        $simplex->set('THEMES_URL', '/themes/');
+        $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
+
+        $cmsExtension = $simplex->get(CmsPageExtension::class);
+        /* @var $cmsExtension CmsPageExtension */
+        $page = $cmsExtension->getCmsPageByUrl('/foo/bar', 'example.com');
+        $this->assertSame('/foo/bar', $page->getUrl());
+    }
 }

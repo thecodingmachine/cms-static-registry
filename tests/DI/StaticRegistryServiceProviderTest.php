@@ -21,6 +21,7 @@ class StaticRegistryServiceProviderTest extends TestCase
             new StaticRegistryServiceProvider()
         ]);
 
+        $simplex->set('ROOT_URL', '/');
         $simplex->set('CMS_ROOT', __DIR__.'/../fixtures/Loaders');
         $simplex->set(CacheInterface::class, function() { return new ArrayCache(); });
 
