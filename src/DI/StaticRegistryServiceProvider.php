@@ -99,9 +99,9 @@ class StaticRegistryServiceProvider extends ServiceProvider
      * @Factory()
      * @return CmsPageExtension
      */
-    public static function getCmsPageExtension(PageRegistry $pageRegistry, BlockRegistry $blockRegistry): CmsPageExtension
+    public static function getCmsPageExtension(PageRegistry $pageRegistry, BlockRegistry $blockRegistry, string $ROOT_URL): CmsPageExtension
     {
-        return new CmsPageExtension($pageRegistry, $blockRegistry);
+        return new CmsPageExtension($pageRegistry, $blockRegistry, $ROOT_URL);
     }
 
     /**
