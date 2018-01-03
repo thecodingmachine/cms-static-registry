@@ -25,11 +25,16 @@ class CmsPageExtension extends \Twig_Extension
      * @var BlockRegistry
      */
     private $blockRegistry;
+    /**
+     * @var string
+     */
+    private $rootUrl;
 
-    public function __construct(PageRegistry $pageRegistry, BlockRegistry $blockRegistry)
+    public function __construct(PageRegistry $pageRegistry, BlockRegistry $blockRegistry, string $rootUrl)
     {
         $this->pageRegistry = $pageRegistry;
         $this->blockRegistry = $blockRegistry;
+        $this->rootUrl = '/'.trim($rootUrl, '/').'/';
     }
 
     /**
@@ -43,6 +48,8 @@ class CmsPageExtension extends \Twig_Extension
             new \Twig_Function('cmsBlocksById', [$this, 'getCmsBlocksById']),
             new \Twig_Function('cmsPagesByTag', [$this, 'getCmsPagesByTag']),
             new \Twig_Function('cmsBlocksByTag', [$this, 'getCmsBlocksByTag']),
+            new \Twig_Function('cmsPageByUrl', [$this, 'getCmsPageByUrl']),
+            new \Twig_Function('url', [$this, 'getUrl']),
         ];
     }
 
@@ -123,5 +130,32 @@ class CmsPageExtension extends \Twig_Extension
         }
 
         return $blocks;
+    }
+
+    /**
+     * @return Page
+     */
+    public function getCmsPageByUrl(string $url, string $domain = null): Page
+    {
+        return $this->pageRegistry->getPage($url, $domain ?: '<any>');
+    }
+
+    /**
+     * Prepends the URL with the "base" url.
+     *
+     * @param string|null $url
+     * @return string|null
+     */
+    public function getUrl(string $url = null): ?string
+    {
+        if ($url === null) {
+            return null;
+        }
+        $isAbsolute = parse_url($url, PHP_URL_SCHEME) !== null;
+        if ($isAbsolute) {
+            return $url;
+        } else {
+            return $this->rootUrl.ltrim($url, '/');
+        }
     }
 }
