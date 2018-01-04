@@ -35,6 +35,9 @@ class CmsPageExtension extends \Twig_Extension
         $this->pageRegistry = $pageRegistry;
         $this->blockRegistry = $blockRegistry;
         $this->rootUrl = '/'.trim($rootUrl, '/').'/';
+        if ($this->rootUrl === '//') {
+            $this->rootUrl = '/';
+        }
     }
 
     /**
